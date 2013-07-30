@@ -1,8 +1,13 @@
 package wield;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.RenderingHints;
 import java.util.Iterator;
 
 public class Game {
@@ -15,6 +20,10 @@ public class Game {
 
 	private Actor lastHovered = null;
 	private Point lastMousePos = new Point(0, 0);
+	
+	private Button adventureButton;
+	
+	private boolean cursorHover = false;
 
 	public Game() {
 		actorContainer.add(adventurers);
@@ -26,6 +35,8 @@ public class Game {
 		weapons.add(new Weapon("Sword", "data/grey-sword.png", 2));
 		weapons.add(new Weapon("Bow", "data/long-bow.png", 4));
 		sites.add(new Site("Cavernous Caverns", "data/cavernous-caverns.png", 10));
+		
+		this.adventureButton = new Button(new Rectangle(300, 300, 100, 50));
 	}
 
 	public void update(double deltaTime) {
@@ -36,15 +47,19 @@ public class Game {
 	}
 
 	public void paint(Graphics g) {
+		Graphics2D g2 = (Graphics2D) g;
+        g2.setStroke(new BasicStroke(3));
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		Iterator<ActorColumn<Actor>> it = this.actorContainer.iterator();
 		while (it.hasNext()) {
-			it.next().paint(g);
+			it.next().paint(g2);
 		}
 		if (this.lastHovered != null && !this.lastHovered.isEndNode()) {
 			Point handle = this.lastHovered.getHandlePoints(Actor.HANDLE_RIGHT);
 			g.drawLine(handle.x, handle.y, this.lastMousePos.x,
 					this.lastMousePos.y);
 		}
+		this.adventureButton.paint(g2);
 	}
 
 	public void mousePressed(Point p) {
@@ -56,7 +71,6 @@ public class Game {
 				this.lastHovered = a;
 			}
 		}
-
 		this.lastMousePos = p;
 	}
 
@@ -66,6 +80,12 @@ public class Game {
 		}
 		this.lastHovered = null;
 		this.lastMousePos = p;
+	}
+	
+	public void mouseClicked(Point p){
+		if(this.adventureButton.hasPointInside(p)){
+			System.out.println("GOGOGO");
+		}
 	}
 
 	public void mouseDragged(Point p) {
@@ -89,5 +109,24 @@ public class Game {
 				}
 			}
 		}
+	}
+
+	public void mouseMoved(Point p) {
+		if(this.adventureButton.hasPointInside(p)){
+			this.adventureButton.setHover(true);
+			this.cursorHover = true;
+		} else if(this.adventureButton.getHover()){
+			this.adventureButton.setHover(false);
+			this.cursorHover = false;
+		}
+	}
+
+	public Cursor getCursor() {
+		if(this.cursorHover){
+			return new Cursor(Cursor.DEFAULT_CURSOR);
+		} else{
+			return new Cursor(Cursor.HAND_CURSOR);
+		}
+		
 	}
 }

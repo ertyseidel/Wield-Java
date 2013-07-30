@@ -2,6 +2,7 @@ package wield;
 
 import java.applet.Applet;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.Image;
@@ -21,6 +22,7 @@ public class Main extends Applet implements Runnable, MouseListener, MouseMotion
 	private Image image;
 	private Graphics second;
 	private Game game;
+	private Cursor cursor;
 	
 	public final int width = 1280;
 	public final int height = 720;
@@ -90,7 +92,7 @@ public class Main extends Applet implements Runnable, MouseListener, MouseMotion
 
 	@Override
 	public void mouseClicked(MouseEvent evt) {
-		// TODO Auto-generated method stub
+		game.mouseClicked(evt.getPoint());
 		
 	}
 
@@ -123,7 +125,11 @@ public class Main extends Applet implements Runnable, MouseListener, MouseMotion
 
 	@Override
 	public void mouseMoved(MouseEvent evt) {
-		// TODO Auto-generated method stub
+		game.mouseMoved(evt.getPoint());
+		if(this.cursor != game.getCursor()){
+			this.cursor = game.getCursor();
+			setCursor(this.cursor);
+		}
 		
 	}
 

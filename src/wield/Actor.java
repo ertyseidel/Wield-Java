@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
-public abstract class Actor {
+public abstract class Actor implements Clickable {
 
 	public static final int HANDLE_LEFT = 0;
 	public static final int HANDLE_RIGHT = 1;
@@ -24,9 +24,9 @@ public abstract class Actor {
 
 	protected boolean selected;
 	private ActorColumn<Actor> column;
-	
+
 	private BufferedImage actorImage;
-	
+
 	protected boolean isEndNode;
 
 	public Actor(String name, String imageURI) {
@@ -80,24 +80,24 @@ public abstract class Actor {
 	public void paint(Graphics g) {
 		g.drawImage(this.actorImage, this.rect.x, this.rect.y, null);
 		if (this.next != null) {
-			g.setColor(Color.CYAN);
+			g.setColor(this.getAdventurerColor());
 			Point handle = this.getHandlePoints(Actor.HANDLE_RIGHT);
 			Point other = this.next.getHandlePoints(Actor.HANDLE_LEFT);
 			g.drawLine(handle.x, handle.y, other.x, other.y);
 		}
-		if(this.selected || this.hasPrev() || this.hasNext()){
+		if (this.selected || this.hasPrev() || this.hasNext() || this instanceof Adventurer) {
 			g.setColor(this.getAdventurerColor());
-			g.drawRect(this.rect.x, this.rect.y, this.rect.width, this.rect.height);
 		} else {
 			g.setColor(Color.BLACK);
-			g.drawRect(this.rect.x, this.rect.y, this.rect.width, this.rect.height);
 		}
+		g.drawRect(this.rect.x, this.rect.y, this.rect.width,
+				this.rect.height);
 	}
-	
-	public Color getAdventurerColor(){
-		if(this.hasPrev()){
+
+	public Color getAdventurerColor() {
+		if (this.hasPrev()) {
 			return this.getPrev(0).getAdventurerColor();
-		} else{
+		} else {
 			return Color.MAGENTA;
 		}
 	}
@@ -127,12 +127,12 @@ public abstract class Actor {
 	public Actor getNext() {
 		return this.next;
 	}
-	
+
 	public void addPrev(Actor a) {
 		this.prevs.add(a);
 	}
-	
-	public void removePrev(Actor a){
+
+	public void removePrev(Actor a) {
 		this.prevs.remove(a);
 	}
 
@@ -143,8 +143,8 @@ public abstract class Actor {
 	public ArrayList<Actor> getPrevs() {
 		return this.prevs;
 	}
-	
-	public Actor getPrev(int index){
+
+	public Actor getPrev(int index) {
 		return this.prevs.get(index);
 	}
 
