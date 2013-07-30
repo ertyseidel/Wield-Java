@@ -13,11 +13,10 @@ public abstract class Actor{
 	private String name;
 	protected Rectangle rect;
 	
-	protected int columnOrder = -1;
-	
 	private Actor connectedTo;
 	
 	protected boolean selected;
+	private ActorColumn<Actor> column;
 	
 	public Actor(String name){
 		this.name = name;
@@ -25,6 +24,11 @@ public abstract class Actor{
 		this.connectedTo = null;
 		this.rect = new Rectangle(100, 100, 50, 50);
 	}
+	
+	public void setColumn(ActorColumn<Actor> column){
+		this.column = column;
+	}
+	
 	
 	public void setRect(Rectangle rect){
 		this.rect = rect;
@@ -42,16 +46,17 @@ public abstract class Actor{
 		return this.name;
 	}
 	
-	public void update(double deltaTime){
-		this.updateRect();
+	public void update(int xIndex, int yIndex){
+		this.updateRect(xIndex, yIndex);
 	}
 	
-	public void updateRect(){
-		this.rect.x = 100 * this.columnOrder;
+	public void updateRect(int xIndex, int yIndex){
+		this.rect.y = 100 * yIndex + 100;
+		this.rect.x = 100 * xIndex;
 	}
 	
 	public int getOrder(){
-		return this.columnOrder;
+		return this.column.getOrder();
 	}
 	
 	public void paint(Graphics g){
@@ -77,6 +82,10 @@ public abstract class Actor{
 
 	public void connectTo(Actor a) {
 		this.connectedTo = a;
+	}
+
+	public boolean hasConnection() {
+		return this.connectedTo != null;
 	}
 	
 }

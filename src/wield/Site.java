@@ -7,10 +7,9 @@ public class Site extends Actor {
 
 	private int danger;
 	
-	public Site(String name, int danger) {
+	public Site(String name,int danger) {
 		super(name);
 		this.danger = danger;
-		this.columnOrder = 10;
 	}
 	
 	public int getDanger(){

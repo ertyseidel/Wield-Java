@@ -13,7 +13,6 @@ public class Adventurer extends Actor{
 		super(name);
 		this.health = health;
 		this.attack = attack;
-		this.columnOrder = 0;
 	}
 
 	public int getHealth(){

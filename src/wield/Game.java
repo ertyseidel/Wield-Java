@@ -2,14 +2,13 @@ package wield;
 
 import java.awt.Graphics;
 import java.awt.Point;
-import java.util.ArrayList;
 import java.util.Iterator;
 
 public class Game {
 
-	private ArrayList<Adventurer> adventurers = new ArrayList<Adventurer>();
-	private ArrayList<Weapon> weapons = new ArrayList<Weapon>();
-	private ArrayList<Site> sites = new ArrayList<Site>();
+	private ActorColumn<Adventurer> adventurers = new ActorColumn<Adventurer>(1);
+	private ActorColumn<Weapon> weapons = new ActorColumn<Weapon>(2);
+	private ActorColumn<Site> sites = new ActorColumn<Site>(3);
 
 	private ActorColumnContainer actorContainer = new ActorColumnContainer();
 
@@ -22,19 +21,21 @@ public class Game {
 		actorContainer.add(sites);
 
 		adventurers.add(new Adventurer("Levi", 1, 1));
+		adventurers.add(new Adventurer("Jorge", 3, 2));
 		weapons.add(new Weapon("Sword", 2));
+		weapons.add(new Weapon("Bow", 4));
 		sites.add(new Site("Cavernous Caverns", 10));
 	}
 
 	public void update(double deltaTime) {
-		Iterator<Actor> it = this.actorContainer.actorIterator();
+		Iterator<ActorColumn<Actor>> it = this.actorContainer.iterator();
 		while (it.hasNext()) {
 			it.next().update(deltaTime);
 		}
 	}
 
 	public void paint(Graphics g) {
-		Iterator<Actor> it = this.actorContainer.actorIterator();
+		Iterator<ActorColumn<Actor>> it = this.actorContainer.iterator();
 		while (it.hasNext()) {
 			it.next().paint(g);
 		}
@@ -70,7 +71,8 @@ public class Game {
 			while (it.hasNext()) {
 				Actor a = it.next();
 				if (a.hasPointInside(p)
-						&& a.getOrder() > this.lastHovered.getOrder()) {
+						&& a.getOrder() == this.lastHovered.getOrder() + 1
+						&& !a.hasConnection()) {
 					this.lastHovered.connectTo(a);
 					this.lastHovered = a;
 					this.lastMousePos = a.getHandlePoints(Actor.HANDLE_LEFT);

@@ -10,7 +10,6 @@ public class Weapon extends Actor{
 	public Weapon(String name, int multiplier) {
 		super(name);
 		this.multiplier = multiplier;
-		this.columnOrder = 1;
 	}
 	
 	public int getMultiplier(){
