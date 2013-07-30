@@ -1,15 +1,15 @@
 package wield;
 
-import java.awt.Color;
 import java.awt.Graphics;
 
 public class Site extends Actor {
 
 	private int danger;
 	
-	public Site(String name,int danger) {
-		super(name);
+	public Site(String name, String imageURI, int danger) {
+		super(name, imageURI);
 		this.danger = danger;
+		this.isEndNode = true;
 	}
 	
 	public int getDanger(){
@@ -23,9 +23,6 @@ public class Site extends Actor {
 	@Override
 	public void paint(Graphics g) {
 		super.paint(g);
-		g.setColor(Color.RED);
-		g.drawRect(this.rect.x, this.rect.y, this.rect.width, this.rect.height);
-		
 	}
 
 

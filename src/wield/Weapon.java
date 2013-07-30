@@ -1,14 +1,13 @@
 package wield;
 
-import java.awt.Color;
 import java.awt.Graphics;
 
 public class Weapon extends Actor{
 
 	private int multiplier;
 	
-	public Weapon(String name, int multiplier) {
-		super(name);
+	public Weapon(String name, String imageURI, int multiplier) {
+		super(name, imageURI);
 		this.multiplier = multiplier;
 	}
 	
@@ -19,9 +18,6 @@ public class Weapon extends Actor{
 	@Override
 	public void paint(Graphics g) {
 		super.paint(g);
-		g.setColor(Color.GREEN);
-		g.drawRect(this.rect.x, this.rect.y, this.rect.width, this.rect.height);
-		
 	}
 
 }

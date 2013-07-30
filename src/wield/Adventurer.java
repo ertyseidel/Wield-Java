@@ -8,11 +8,18 @@ public class Adventurer extends Actor{
 	
 	private int health;
 	private int attack;
+	private Color color;
 	
-	public Adventurer(String name, int health, int attack){
-		super(name);
+	public Adventurer(String name, String imageURI, int health, int attack, Color color){
+		super(name, imageURI);
 		this.health = health;
 		this.attack = attack;
+		this.color = color;
+	}
+	
+	@Override
+	public Color getAdventurerColor(){
+		return this.color;
 	}
 
 	public int getHealth(){
@@ -26,12 +33,6 @@ public class Adventurer extends Actor{
 	@Override
 	public void paint(Graphics g) {
 		super.paint(g);
-		g.setColor(Color.BLUE);
-		g.drawRect(this.rect.x, this.rect.y, this.rect.width, this.rect.height);
-		if(this.selected){
-			g.fillRect(this.rect.x, this.rect.y, this.rect.width, this.rect.height);
-		}
-		
 	}
 
 }
