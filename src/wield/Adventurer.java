@@ -18,16 +18,31 @@ public class Adventurer extends Actor{
 	}
 	
 	@Override
-	public Color getAdventurerColor(){
-		return this.color;
+	public Adventurer getAdventurer(){
+		return this;
 	}
 
+	public Color getColor(){
+		return this.color;
+	}
+	
 	public int getHealth(){
 		return this.health;
 	}
 	
+	@Override
+	public String toString(){
+		return "Atk: " + this.getAttack();
+	}
+	
 	public int getAttack(){
-		return this.attack;
+		int atk = this.attack;
+		Actor a = this;
+		while(a.hasNext()){
+			atk *= a.getAttackMultiplier();
+			a = a.getNext();
+		}
+		return atk;
 	}
 	
 	@Override

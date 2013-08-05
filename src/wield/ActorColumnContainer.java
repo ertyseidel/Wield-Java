@@ -13,12 +13,20 @@ public class ActorColumnContainer extends ArrayList<ActorColumn<Actor>> {
 
 			@Override
 			public boolean hasNext() {
-				return (listIndex) < size()
-						|| inListIndex + 1 < get(size() - 1).size();
+				int _li = listIndex;
+				int _ili = inListIndex;
+				if(_li >= size()) return false;
+				if(_ili >= get(_li).size()) _li ++;
+				while(_li < size() && get(_li).size() == 0 ){
+					_li ++;
+				}
+				if(_li >= size()) return false;
+				return true;
 			}
 
 			@Override
 			public Actor next() {
+				while(get(listIndex).size() == 0) listIndex ++;
 				Actor a = get(listIndex).get(inListIndex);
 				if (get(listIndex).size() == inListIndex + 1) {
 					listIndex++;

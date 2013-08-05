@@ -8,6 +8,7 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.util.ArrayList;
 import java.util.Iterator;
 
 public class Game {
@@ -20,9 +21,9 @@ public class Game {
 
 	private Actor lastHovered = null;
 	private Point lastMousePos = new Point(0, 0);
-	
+
 	private Button adventureButton;
-	
+
 	private boolean cursorHover = false;
 
 	public Game() {
@@ -30,12 +31,17 @@ public class Game {
 		actorContainer.add(weapons);
 		actorContainer.add(sites);
 
-		adventurers.add(new Adventurer("Levi", "data/green-fighter.png", 1, 1, Color.GREEN));
-		adventurers.add(new Adventurer("Jorge","data/black-fighter.png", 3, 2, Color.GRAY));
+		adventurers.add(new Adventurer("Levi", "data/green-fighter.png", 1, 1,
+				Color.GREEN));
+		adventurers.add(new Adventurer("Jorge", "data/black-fighter.png", 3, 2,
+				Color.GRAY));
 		weapons.add(new Weapon("Sword", "data/grey-sword.png", 2));
 		weapons.add(new Weapon("Bow", "data/long-bow.png", 4));
-		sites.add(new Site("Cavernous Caverns", "data/cavernous-caverns.png", 10));
-		
+		sites.add(new Site("Cavernous Caverns", "data/cavernous-caverns.png",
+				10));
+		sites.add(new Site("Sorcerer's Tower", "data/sorcerers-tower.png",
+				40));
+
 		this.adventureButton = new Button(new Rectangle(300, 300, 100, 50));
 	}
 
@@ -48,8 +54,9 @@ public class Game {
 
 	public void paint(Graphics g) {
 		Graphics2D g2 = (Graphics2D) g;
-        g2.setStroke(new BasicStroke(3));
-        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		g2.setStroke(new BasicStroke(3));
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+				RenderingHints.VALUE_ANTIALIAS_ON);
 		Iterator<ActorColumn<Actor>> it = this.actorContainer.iterator();
 		while (it.hasNext()) {
 			it.next().paint(g2);
@@ -66,8 +73,9 @@ public class Game {
 		Iterator<Actor> it = this.actorContainer.actorIterator();
 		while (it.hasNext()) {
 			Actor a = it.next();
-			if (a.hasPointInside(p)) {
+			if (a.hasPointInside(p) && (a instanceof Adventurer || a.getAdventurer() != null)) {
 				a.setSelected(true);
+				a.recursiveDisconnect();
 				this.lastHovered = a;
 			}
 		}
@@ -81,10 +89,40 @@ public class Game {
 		this.lastHovered = null;
 		this.lastMousePos = p;
 	}
-	
-	public void mouseClicked(Point p){
-		if(this.adventureButton.hasPointInside(p)){
-			System.out.println("GOGOGO");
+
+	public void mouseClicked(Point p) {
+		if (this.adventureButton.hasPointInside(p)) {
+			this.doAdventure();
+		}
+	}
+
+	private void doAdventure() {
+		// damage the sites and remove them if they are done with
+		Iterator<Actor> it = this.sites.iterator();
+		while (it.hasNext()) {
+			Site s = (Site) it.next();
+			ArrayList<Adventurer> adv = s.getAdventurers();
+			Iterator<Adventurer> advi = adv.iterator();
+			while(advi.hasNext() && !(s.getDanger() < 0)){
+				s.takeDamage(advi.next().getAttack());
+				if (s.getDanger() <= 0) {
+					s.remove();
+					it.remove();
+				}
+			}
+		}
+		// go through the remaining sites and notify them that it is a new round
+		int dangerSum = 0;
+		it = this.sites.iterator();
+		while (it.hasNext()) {
+			Site s = (Site) it.next();
+			s.newRound();
+			dangerSum += s.getDanger();
+		}
+		if (this.sites.size() == 0) {
+			System.out.println("You Win!");
+		} else if(dangerSum > 1000){
+			System.out.println("You Lose!");
 		}
 	}
 
@@ -112,21 +150,21 @@ public class Game {
 	}
 
 	public void mouseMoved(Point p) {
-		if(this.adventureButton.hasPointInside(p)){
+		if (this.adventureButton.hasPointInside(p)) {
 			this.adventureButton.setHover(true);
 			this.cursorHover = true;
-		} else if(this.adventureButton.getHover()){
+		} else if (this.adventureButton.getHover()) {
 			this.adventureButton.setHover(false);
 			this.cursorHover = false;
 		}
 	}
 
 	public Cursor getCursor() {
-		if(this.cursorHover){
+		if (!this.cursorHover) {
 			return new Cursor(Cursor.DEFAULT_CURSOR);
-		} else{
+		} else {
 			return new Cursor(Cursor.HAND_CURSOR);
 		}
-		
+
 	}
 }
